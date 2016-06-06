@@ -710,7 +710,7 @@
          */
         getMoment: function()
         {
-            return hasMoment ? moment(this._d) : null;
+            return hasMoment && isDate(this._d) ? moment(this._d) : null;
         },
 
         /**
