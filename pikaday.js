@@ -728,7 +728,7 @@
          */
         getDate: function()
         {
-            return isDate(this._d) ? new Date(this._d.getTime()) : new Date();
+            return isDate(this._d) ? new Date(this._d.getTime()) : null;
         },
 
         /**
