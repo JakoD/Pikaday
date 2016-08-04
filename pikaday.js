@@ -246,6 +246,12 @@
         // Specify a DOM element to render the calendar in
         container: undefined,
 
+        // whether to show a reset button
+        showResetButton: null,
+
+        // text to be displayed on the reset button
+        resetButtonText: 'Reset',
+
         // internationalization
         i18n: {
             previousMonth : 'Previous Month',
@@ -331,6 +337,15 @@
     renderBody = function(rows)
     {
         return '<tbody>' + rows.join('') + '</tbody>';
+    },
+
+    renderFooter = function(opts, date) {
+        var arr = [];
+        if (opts.showResetButton) {
+            arr.push('<button class="pika-reset' + (date ? '' : ' is-selected') + '">' + opts.resetButtonText + '</button>');
+        }
+
+        return '<div>' + arr.join('') + '</div>';
     },
 
     renderHead = function(opts)
@@ -447,6 +462,9 @@
                 }
                 else if (hasClass(target, 'pika-next')) {
                     self.nextMonth();
+                }
+                else if (hasClass(target, 'pika-reset')) {
+                    self.setDate();
                 }
             }
             if (!hasClass(target, 'pika-select')) {
@@ -950,6 +968,7 @@
                 maxYear = opts.maxYear,
                 minMonth = opts.minMonth,
                 maxMonth = opts.maxMonth,
+                date = this.getDate(),
                 html = '',
                 randId;
 
@@ -969,7 +988,7 @@
             randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
 
             for (var c = 0; c < opts.numberOfMonths; c++) {
-                html += '<div class="pika-lendar">' + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId) + '</div>';
+                html += '<div class="pika-lendar">' + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId) + renderFooter(opts, date) + '</div>';
             }
 
             this.el.innerHTML = html;
