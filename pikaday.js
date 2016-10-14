@@ -246,7 +246,11 @@
         // Specify a DOM element to render the calendar in
         container: undefined,
 
-        // whether to show a reset button
+        /* whether to show a reset button; options:
+             *   true  always
+             *   'changed'  if content is different from initial value
+             *   false|null|undefined  never
+             */
         showResetButton: null,
 
         // text to be displayed on the reset button
@@ -341,8 +345,8 @@
 
     renderFooter = function(opts, date) {
         var arr = [];
-        if (opts.showResetButton) {
-            arr.push('<button class="pika-reset' + (date ? '' : ' is-selected') + '">' + opts.resetButtonText + '</button>');
+        if (opts.showResetButton === true || opts.showResetButton == 'changed' && (!opts.field || opts.defaultDate != date)) {
+            arr.push('<button class="pika-reset' + (date ? '' : ' is-selected') + '">' + (opts.resetButtonText !== null ? opts.resetButtonText : opts.field.getAttribute('placeholder')) + '</button>');
         }
 
         return '<div>' + arr.join('') + '</div>';
@@ -446,8 +450,12 @@
             }
 
             if (!hasClass(target, 'is-disabled')) {
-                if (hasClass(target, 'pika-button') && !hasClass(target, 'is-empty') && !hasClass(target.parentNode, 'is-disabled')) {
-                    self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
+                if (hasClass(target, 'pika-button') && !hasClass(target, 'is-empty') && !hasClass(target.parentNode, 'is-disabled') || hasClass(target, 'pika-reset')) {
+                    if (hasClass(target, 'pika-reset')) {
+                        self.setDate();
+                    } else {
+                        self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
+                    }
                     if (opts.bound) {
                         sto(function() {
                             self.hide();
@@ -462,9 +470,6 @@
                 }
                 else if (hasClass(target, 'pika-next')) {
                     self.nextMonth();
-                }
-                else if (hasClass(target, 'pika-reset')) {
-                    self.setDate();
                 }
             }
             if (!hasClass(target, 'pika-select')) {
